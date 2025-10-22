@@ -43,9 +43,8 @@ def download_camera_image():
 
 def main():
     print("🚦 Starting TrafficWatchNI image downloader...")
-    while True:
-        download_camera_image()
-        time.sleep(60)  # 1 minute
+    download_camera_image()
+    print("🏁 Done — exiting program.")
 
 if __name__ == "__main__":
     main()
