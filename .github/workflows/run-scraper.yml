@@ -8,10 +8,9 @@ on:
     branches:
       - main  # your default branch
   schedule:
-    - cron: '*/5 * * * *'  # every 5 minutes, just for testing
+    - cron: '0/1 * * * *'  # every 5 minutes, just for testing
     - cron: '0 11 * * *'
-    - cron: '0 15 * * *'
-  workflow_dispatch:   # Allow manual trigger
+    - cron: '30 5,17 * * 2,4'
 
 jobs:
   run-script:
