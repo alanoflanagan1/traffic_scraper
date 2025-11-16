@@ -3,8 +3,16 @@ import time
 import datetime
 import os
 
-# Direct camera image URL
-CAMERA_URL = "https://cctv.trafficwatchni.com/3273.jpg"
+# Camera URLs (primary + secondary)
+CAMERAS = {
+    "A1_Hillsborough_Roundabout": "https://cctv.trafficwatchni.com/3273.jpg",
+    "A1_Dromore": "https://cctv.trafficwatchni.com/3274.jpg",
+    "A1_Hillsborough_South": "https://cctv.trafficwatchni.com/2.jpg",
+    "A2_Holywood_Exchange": "https://cctv.trafficwatchni.com/308.jpg",
+    "Greenhaw": "https://cctv.trafficwatchni.com/3293.jpg",
+    "M3_Sydenham_Bypass": "https://cctv.trafficwatchni.com/3298.jpg",
+    "A2_BangorRd_OldStationRd": "https://cctv.trafficwatchni.com/3262.jpg"
+}
 
 # Folder to save images
 SAVE_DIR = "traffic_images"
@@ -19,32 +27,34 @@ HEADERS = {
     "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
 }
 
-def download_camera_image():
+def download_camera_image(name, url):
     try:
-        # Add timestamp to prevent caching
+        # Add timestamp to avoid caching
         timestamp_param = int(time.time() * 1000)
-        url_with_cache_buster = f"{CAMERA_URL}?cache={timestamp_param}"
+        url_cache = f"{url}?cache={timestamp_param}"
 
-        # Request image using browser-like headers
-        response = requests.get(url_with_cache_buster, headers=HEADERS, timeout=10)
+        response = requests.get(url_cache, headers=HEADERS, timeout=10)
         response.raise_for_status()
 
-        # Save image with timestamp
+        # Save with timestamp and camera name
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = os.path.join(SAVE_DIR, f"traffic_cam_{timestamp}.jpg")
+        filename = os.path.join(SAVE_DIR, f"{name}_{timestamp}.jpg")
 
         with open(filename, "wb") as f:
             f.write(response.content)
 
-        print(f"✅ Saved image: {filename}")
+        print(f"✅ Saved image for {name}: {filename}")
 
     except Exception as e:
-        print(f"⚠️ Error downloading image: {e}")
+        print(f"⚠️ Error downloading {name}: {e}")
 
 def main():
-    print("🚦 Starting TrafficWatchNI image downloader...")
-    download_camera_image()
-    print("🏁 Done — exiting program.")
+    print("🚦 Starting TrafficWatchNI multi-camera downloader...\n")
+
+    for name, url in CAMERAS.items():
+        download_camera_image(name, url)
+
+    print("\n🏁 Done — all cameras processed.")
 
 if __name__ == "__main__":
     main()
